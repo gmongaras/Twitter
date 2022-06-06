@@ -1,13 +1,17 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetsAdapter;
@@ -50,8 +54,6 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Configure the Recycler View: Adapter
         rvTweets.setAdapter(adapter);
-
-
 
         // Get the logout button
         logoutBtn = findViewById(R.id.logoutBtn);
@@ -97,5 +99,30 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.e(TAG, "onError! " + response, throwable);
             }
         });
+    }
+
+
+    // Inflate the menu. Return true so that the menu is displayed and
+    // false so that it's not displayed.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu by adding items to the anchor bar
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+
+    // Handle clicks on the action bar
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // If the item selected is the create tweet button (compose icon).
+        if (item.getItemId() == R.id.compose) {
+            Toast.makeText(this, "Compose!", Toast.LENGTH_SHORT).show();
+
+            // Navigate to the composer activity
+        }
+
+        return true;
     }
 }

@@ -4,7 +4,9 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
+@Parcel
 public class User {
     public String name;
     public String screenName;

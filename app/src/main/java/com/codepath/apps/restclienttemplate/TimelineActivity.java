@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,9 @@ import java.util.List;
 import okhttp3.Headers;
 
 public class TimelineActivity extends AppCompatActivity {
+
+    // Unique request code for response
+    public final int REQUEST_CODE = 20;
 
     private static final String TAG = "TimelineActivity";
     TwitterClient client;
@@ -121,9 +126,36 @@ public class TimelineActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.compose) {
             // Navigate to the composer activity
             Intent i = new Intent(this, ComposeActivity.class);
-            startActivity(i);
+
+            // Start the intent, but send data back to the parent. So instead of
+            // using startActivity, we use startActivityForResult
+            startActivityForResult(i, REQUEST_CODE);
+
+            return true;
         }
 
-        return true;
+        return super.onOptionsItemSelected(item);
+    }
+
+    // If a tweet is successfully sent (through the onOptionsItemSelected, startActivityForResult
+    // method), we should handle that response and update the racycler view
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // If the request code is the same as the request code for
+        // the tweet publication and the result is OK, handle the response
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            // Get data from the intent that published the tweet
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+
+            // Update the Recycler View with this new tweet
+            tweets.add(0, tweet); // Add a tweet to the beginning of the list
+            adapter.notifyItemInserted(0); // Notify the RV that a change was made
+            rvTweets.smoothScrollToPosition(0); // Go to the top of the RV
+        }
+        else {
+            Log.e(TAG, "Issue with publishing tweet. Code: " + String.valueOf(requestCode));
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

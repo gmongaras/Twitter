@@ -119,8 +119,6 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // If the item selected is the create tweet button (compose icon).
         if (item.getItemId() == R.id.compose) {
-            Toast.makeText(this, "Compose!", Toast.LENGTH_SHORT).show();
-
             // Navigate to the composer activity
             Intent i = new Intent(this, ComposeActivity.class);
             startActivity(i);

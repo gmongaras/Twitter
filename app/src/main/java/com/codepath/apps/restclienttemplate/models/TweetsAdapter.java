@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.detail_tweet;
 
@@ -85,6 +88,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvUsername;
         TextView tvTimestamp;
         ImageView ivMedia;
+        TextView retweet_ct;
+        TextView like_ct;
+
+        // Did the user favorite the tweet?
+        boolean favorited;
 
         // Given a view to store a tweet, populate that view
         // with tweet information
@@ -98,6 +106,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
             ivMedia = itemView.findViewById(R.id.ivMedia);
+            retweet_ct = itemView.findViewById(R.id.retweet_ct);
+            like_ct = itemView.findViewById(R.id.like_ct);
+        }
+
+        // Convert a numeric string to a string with a K in it
+        // Ex: 1500 -> 1.5 K
+        public String convertNum(String num) {
+            // Convert the string to an integer
+            int n = Integer.parseInt(num);
+
+            // Check if the value is above 1000
+            if (n / 1000 > 0) {
+                // Divide the integer by 1000 and store it
+                // as a string with a K in it
+                num = String.valueOf(n/1000) + "K";
+            }
+
+            // Return the number as a string
+            return num;
         }
 
         // Given a tweet, save the data form the tweet into this object
@@ -107,10 +134,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName.setText(tweet.user.screenName);
             tvUsername.setText("@" + tweet.user.username);
             tvTimestamp.setText(getRelativeTimeAgo(tweet.createdAt));
+            retweet_ct.setText(convertNum(tweet.retweet_count));
+            like_ct.setText(convertNum(tweet.favorite_count));
+
+            // Get the favorited state
+            favorited = tweet.favorited;
 
             // Load in the profile image
             Glide.with(context)
                     .load(tweet.user.publicImageUrl)
+                    .circleCrop()
                     .into(ivProfileView);
 
             // If media is present, load in the media image
@@ -122,6 +155,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 // Load in the image
                 Glide.with(context)
                         .load(tweet.mediaURL)
+                        .fitCenter()
+                        .apply(new RequestOptions().transform(new RoundedCorners(50)))
                         .into(ivMedia);
 
                 // Make the view visible

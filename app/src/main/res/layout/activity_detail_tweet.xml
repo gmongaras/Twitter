@@ -78,6 +78,81 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
-        android:text="TextView"
+        android:textColor="@color/lightGrey"
+        tools:text="timestamp" />
+
+    <ImageView
+        android:id="@+id/reply_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/retweet_ct_det"
+        android:layout_alignStart="@+id/retweet_ct_det"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        app:srcCompat="@drawable/reply" />
+
+    <ImageView
+        android:id="@+id/retweet_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/retweet_ct_det"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@+id/reply_det"
+        app:srcCompat="@drawable/retweet" />
+
+    <ImageView
+        android:id="@+id/like_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/retweet_ct_det"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@+id/retweet_det"
+        app:srcCompat="@drawable/heart" />
+
+    <TextView
+        android:id="@+id/retweet_ct_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTimestamp_det"
+        android:layout_alignStart="@+id/tvTimestamp_det"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/white"
+        tools:text="100" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/retweet_ct_det"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/retweet_ct_det"
+        android:text="Retweets"
         android:textColor="@color/lightGrey" />
+
+    <TextView
+        android:id="@+id/like_ct_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView5"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/textView5"
+        android:textColor="@color/white"
+        tools:text="100" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/like_ct_det"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/like_ct_det"
+        android:text="Likes"
+        android:textColor="@color/lightGrey" />
+
 </RelativeLayout>

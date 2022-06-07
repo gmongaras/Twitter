@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -26,6 +28,9 @@ public class detail_tweet extends AppCompatActivity {
     TextView tvUsername_det;
     TextView tvTimestamp_det;
     ImageView ivMedia_det;
+    TextView retweet_ct_det;
+    TextView like_ct_det;
+    boolean favorited;
 
     TwitterClient client;
 
@@ -43,6 +48,8 @@ public class detail_tweet extends AppCompatActivity {
         tvUsername_det = findViewById(R.id.tvUsername_det);
         tvTimestamp_det = findViewById(R.id.tvTimestamp_det);
         ivMedia_det = findViewById(R.id.ivMedia_det);
+        retweet_ct_det = findViewById(R.id.retweet_ct_det);
+        like_ct_det = findViewById(R.id.like_ct_det);
 
         // Get a twitter client instance
         client = new TwitterClient(this);
@@ -73,10 +80,14 @@ public class detail_tweet extends AppCompatActivity {
                     tvScreenName_det.setText(tweet.user.screenName);
                     tvUsername_det.setText("@" + tweet.user.username);
                     tvTimestamp_det.setText(tweet.createdAt);
+                    retweet_ct_det.setText(tweet.retweet_count);
+                    like_ct_det.setText(tweet.favorite_count);
+                    favorited = tweet.favorited;
 
                     // Load in the profile image
                     Glide.with(ivProfileImage_det)
                             .load(tweet.user.publicImageUrl)
+                            .circleCrop()
                             .into(ivProfileImage_det);
 
                     // If media is present, load in the media image
@@ -88,6 +99,8 @@ public class detail_tweet extends AppCompatActivity {
                         // Load in the image
                         Glide.with(ivMedia_det)
                                 .load(tweet.mediaURL)
+                                .fitCenter()
+                                .apply(new RequestOptions().transform(new RoundedCorners(50)))
                                 .into(ivMedia_det);
 
                         // Make the view visible

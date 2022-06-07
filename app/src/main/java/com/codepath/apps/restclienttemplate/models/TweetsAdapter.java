@@ -67,6 +67,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         TextView tvUsername;
         TextView tvTimestamp;
+        ImageView ivMedia;
 
         // Given a view to store a tweet, populate that view
         // with tweet information
@@ -79,6 +80,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
+            ivMedia = itemView.findViewById(R.id.ivMedia);
         }
 
         // Given a tweet, save the data form the tweet into this object
@@ -89,10 +91,21 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvUsername.setText("@" + tweet.user.username);
             tvTimestamp.setText(getRelativeTimeAgo(tweet.createdAt));
 
-            // Load in the image
+            // Load in the profile image
             Glide.with(context)
                     .load(tweet.user.publicImageUrl)
                     .into(ivProfileView);
+
+            // If media is present, load in the media image
+            if (tweet.mediaURL.length() > 0) {
+                ivMedia.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(tweet.mediaURL)
+                        .into(ivMedia);
+            }
+            else {
+                ivMedia.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

@@ -20,12 +20,18 @@ public class Tweet {
     public String createdAt;
     public User user;
 
+    // Media (images) in a tweet
+    public String mediaURL;
+    public int media_w, media_h;
+
     private static final String TAG = "User";
 
     public Tweet() {
         this.body = "";
         this.createdAt = "";
         this.user = new User();
+        mediaURL = "";
+        media_w = media_h = 0;
     }
 
     // Load in JSON data into a new Tweet
@@ -42,6 +48,17 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
 
+        // If the tweet has media, store the media
+        if (jsonObject.getJSONObject("entities").has("media")) {
+            // Get the media object
+            JSONObject media = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0);
+
+            // Get the media URL and size
+            tweet.mediaURL = media.getString("media_url_https");
+            JSONObject sizes = media.getJSONObject("sizes").getJSONObject("thumb");
+            tweet.media_w = sizes.getInt("w");
+            tweet.media_h = sizes.getInt("h");
+        }
 
         return tweet;
     }

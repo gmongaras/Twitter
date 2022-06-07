@@ -37,8 +37,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        tools:text="This is my Tweet!!"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        tools:text="This is my Tweet!!" />
 
     <TextView
         android:id="@+id/tvUsername"

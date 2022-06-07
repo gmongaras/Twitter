@@ -98,12 +98,23 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             // If media is present, load in the media image
             if (tweet.mediaURL.length() > 0) {
-                ivMedia.setVisibility(View.VISIBLE);
+                // Make the view have spacial dimensions
+                ivMedia.getLayoutParams().height = -2;
+                ivMedia.getLayoutParams().width = -1;
+
+                // Load in the image
                 Glide.with(context)
                         .load(tweet.mediaURL)
                         .into(ivMedia);
+
+                // Make the view visible
+                ivMedia.setVisibility(View.VISIBLE);
             }
+            // If media is not present, make the view invisible
             else {
+                //
+                ivMedia.getLayoutParams().height = 0;
+                ivMedia.getLayoutParams().width = 0;
                 ivMedia.setVisibility(View.INVISIBLE);
             }
         }

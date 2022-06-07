@@ -7,7 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".ComposeActivity"
     app:counterEnabled="true"
-    app:counterMaxLength="280" >
+    app:counterMaxLength="280"
+    android:background="@color/black"
+    app:hintTextColor="@color/blue"
+    app:placeholderTextColor="@color/white"
+    app:placeholderTextAppearance="@style/TextAppearance.AppCompat"
+    app:counterTextColor="@color/white"
+    >
 
     <EditText
         android:id="@+id/etCompose"
@@ -16,11 +22,18 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
+        android:foregroundTint="@color/blue"
         android:gravity="start|top"
         android:hint="What's happening?"
         android:inputType="textMultiLine"
         android:minLines="5"
-
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/blue"
+        android:textColorLink="@color/blue"
+        android:textColorHint="@color/blue"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat"
+        android:backgroundTint="@color/white"
+        android:theme="@style/conpose_style"
         />
 
     <Button
@@ -32,5 +45,6 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:text="Tweet"
-        android:backgroundTint="@color/blue"/>
+        android:backgroundTint="@color/blue"
+        android:layout_gravity="center" />
 </com.google.android.material.textfield.TextInputLayout>

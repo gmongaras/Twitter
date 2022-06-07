@@ -44,6 +44,12 @@ public class TimelineActivity extends AppCompatActivity {
     // Used for swipe reloading
     private SwipeRefreshLayout swipeContainer;
 
+    // Used for endless scrolling
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    // The smallest id seen so far
+    long smallest_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +65,12 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
 
+        // Set the smallest id as the largest long value
+        smallest_id = 9223372036854775807L;
+
         // Configure the Recycler View: Layout Manager
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
 
         // Configure the Recycler View: Adapter
         rvTweets.setAdapter(adapter);
@@ -85,6 +95,23 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Populate the home timeline recycler view using the API
         populateHomeTimeline();
+
+
+
+
+        // Enable endless scrolling
+        rvTweets.setLayoutManager(linearLayoutManager);
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvTweets.addOnScrollListener(scrollListener);
 
 
 
@@ -115,6 +142,46 @@ public class TimelineActivity extends AppCompatActivity {
 
     }
 
+
+    // This method sends out a network request and appends new data items to your adapter.
+    public void loadNextDataFromApi(int offset) {
+        // Send an API request to retrieve appropriate paginated data
+        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
+        //  --> Deserialize and construct new model objects from the API response
+        //  --> Append the new data objects to the existing set of items inside the array of items
+        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
+
+        // Call the API method to get the home timeline information
+        client.getTweets(String.valueOf(smallest_id-1), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "onSuccess! " + json.toString());
+
+                // Load in a list of tweets and notify the adapter
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    tweets.addAll(Tweet.fromJSONArray(jsonArray));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Json exception", e);
+                }
+
+                // Get the smallest id seen so far
+                for (int i = 0; i < tweets.size(); i++) {
+                    if (Long.parseLong(tweets.get(i).id) < smallest_id) {
+                        smallest_id = Long.parseLong(tweets.get(i).id);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onError! " + response, throwable);
+            }
+        });
+    }
+
+
     private void populateHomeTimeline() {
         // Call the API method to get the home timeline information
         client.getHomeTimeline(new JsonHttpResponseHandler() {
@@ -127,6 +194,13 @@ public class TimelineActivity extends AppCompatActivity {
                 try {
                     tweets.addAll(Tweet.fromJSONArray(jsonArray));
                     adapter.notifyDataSetChanged();
+
+                    // Get the smallest id seen so far
+                    for (int i = 0; i < tweets.size(); i++) {
+                        if (Long.parseLong(tweets.get(i).id) < smallest_id) {
+                            smallest_id = Long.parseLong(tweets.get(i).id);
+                        }
+                    }
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                 }
@@ -203,6 +277,14 @@ public class TimelineActivity extends AppCompatActivity {
                 adapter.clear();
                 // the data has come back, add new items to your adapter
                 adapter.addAll(tweets);
+                // Reset the smallest id as the largest long value
+                smallest_id = 9223372036854775807L;
+                // Get the smallest id seen so far
+                for (int i = 0; i < tweets.size(); i++) {
+                    if (Long.parseLong(tweets.get(i).id) < smallest_id) {
+                        smallest_id = Long.parseLong(tweets.get(i).id);
+                    }
+                }
                 // Populate the timeline with new data
                 populateHomeTimeline();
                 // Now we call setRefreshing(false) to signal refresh has finished

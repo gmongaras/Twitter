@@ -46,13 +46,13 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/gmongaras/Twitter/blob/main/Demo.gif' height="400" title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [Kap](https://getkap.co/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+- Took me a while to figure out how to start since I was running into an issue with the room library in gradle. After a few hours, I figured out the issue had to do with an outdated libaray and I had to update it from '2.3.0' to specifically '2.4.0-alpha03'. If I used '2.4.0', I would have to update the SDK to 32 which would lead to other issues.
 
 ## Open-source libraries used
 

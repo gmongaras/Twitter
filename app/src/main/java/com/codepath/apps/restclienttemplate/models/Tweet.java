@@ -1,14 +1,18 @@
 package com.codepath.apps.restclienttemplate.models;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Parcel
 public class Tweet {
@@ -18,11 +22,6 @@ public class Tweet {
 
     private static final String TAG = "User";
 
-    public Tweet(String body, String createdAt, User user) {
-        this.body = body;
-        this.createdAt = createdAt;
-        this.user = user;
-    }
     public Tweet() {
         this.body = "";
         this.createdAt = "";
@@ -35,7 +34,11 @@ public class Tweet {
         Tweet tweet = new Tweet();
 
         // Get the JSON data
-        tweet.body = jsonObject.getString("text");
+        if(jsonObject.has("full_text")) {
+            tweet.body = jsonObject.getString("full_text");
+        } else {
+            tweet.body = jsonObject.getString("text");
+        }
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
 

@@ -9,18 +9,15 @@ import org.parceler.Parcel;
 @Parcel
 public class User {
     public String name;
+    public String username;
     public String screenName;
     public String publicImageUrl;
 
     private static final String TAG = "User";
 
-    public User(String name, String screenName, String publicImageUrl) {
-        this.name = name;
-        this.screenName = screenName;
-        this.publicImageUrl = publicImageUrl;
-    }
     public User() {
         this.name = "";
+        this.username = "";
         this.screenName = "";
         this.publicImageUrl = "";
     }
@@ -31,7 +28,8 @@ public class User {
 
         // Get the JSON data
         user.name = jsonObject.getString("name");
-        user.screenName = jsonObject.getString("screen_name");
+        user.username = jsonObject.getString("screen_name");
+        user.screenName = jsonObject.getString("name");
         user.publicImageUrl = jsonObject.getString("profile_image_url_https");
 
 

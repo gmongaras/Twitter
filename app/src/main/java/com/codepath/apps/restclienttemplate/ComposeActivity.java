@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,10 @@ public class ComposeActivity extends AppCompatActivity {
 
         // Get the button and text field
         etCompose = findViewById(R.id.etCompose);
+        etCompose.setTextColor(Color.WHITE);
+        etCompose.setLinkTextColor(Color.WHITE);
+        etCompose.setHintTextColor(Color.WHITE);
+        etCompose.setHighlightColor(Color.WHITE);
         btnTweet = findViewById(R.id.btnTweet);
 
         // Get a twitter client instance

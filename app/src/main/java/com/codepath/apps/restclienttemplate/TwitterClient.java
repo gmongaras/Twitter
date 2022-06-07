@@ -50,6 +50,7 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1); // Parameters from https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-home_timeline
+		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
 	}
 

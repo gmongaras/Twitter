@@ -68,7 +68,7 @@ public class TimelineActivity extends AppCompatActivity {
         // Get the logout button
         logoutBtn = findViewById(R.id.logoutBtn);
 
-        // Create an onClick event listener
+        // Create an onClick event listener for the logout button
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

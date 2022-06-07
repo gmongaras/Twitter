@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.models;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.detail_tweet;
 
 import org.w3c.dom.Text;
 
@@ -41,6 +43,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view and inflate it in the Recycler View
         View view = LayoutInflater.from(context).inflate(R.layout.item_tweet, parent, false);
+
+        // Return the view
         return new ViewHolder(view);
     }
 
@@ -49,6 +53,19 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Get the data/element at the given position
         Tweet tweet = tweets.get(position);
+
+        // When the view (tweet) is clicked, we want to display a
+        // detailed view of that tweet
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Move to the detailed view window
+                Context context = v.getContext();
+                Intent i = new Intent(context, detail_tweet.class);
+                i.putExtra("id", tweets.get(position).id);
+                context.startActivity(i);
+            }
+        });
 
         // Bind the tweet with the view holder
         holder.bind(tweet);
@@ -118,6 +135,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivMedia.setVisibility(View.INVISIBLE);
             }
         }
+
     }
 
     // Clean all elements of the recycler

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="0dp"
+    android:layout_marginTop="0dp"
+    android:layout_marginRight="0dp"
+    android:background="@color/black"
+    tools:context=".detail_tweet">
+
+    <ImageView
+        android:id="@+id/ivProfileImage_det"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="27dp"
+        tools:layout_editor_absoluteY="25dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvScreenName_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@+id/ivProfileImage_det"
+        android:textColor="@color/white"
+        tools:text="name" />
+
+    <TextView
+        android:id="@+id/tvUsername_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvScreenName_det"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/ivProfileImage_det"
+        android:textColor="@color/lightGrey"
+        tools:text="username" />
+
+    <TextView
+        android:id="@+id/tvBody_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivProfileImage_det"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:text="TextView"
+        android:textColor="@color/white"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:clickable="false" />
+
+    <ImageView
+        android:id="@+id/ivMedia_det"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBody_det"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="5dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvTimestamp_det"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivMedia_det"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:text="TextView"
+        android:textColor="@color/lightGrey" />
+</RelativeLayout>

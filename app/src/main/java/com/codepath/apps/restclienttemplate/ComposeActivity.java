@@ -36,10 +36,6 @@ public class ComposeActivity extends AppCompatActivity {
 
         // Get the button and text field
         etCompose = findViewById(R.id.etCompose);
-        etCompose.setTextColor(Color.WHITE);
-        etCompose.setLinkTextColor(Color.WHITE);
-        etCompose.setHintTextColor(Color.WHITE);
-        etCompose.setHighlightColor(Color.WHITE);
         btnTweet = findViewById(R.id.btnTweet);
 
         // Get a twitter client instance

@@ -64,4 +64,16 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("status", tweetContent);
 		client.post(endpoint, params, "", handler);
 	}
+
+	// Send a request to get information on a given tweet
+	public void getTweetInfo(String tweetId, JsonHttpResponseHandler handler) {
+		// Get the endpoint to send the request to
+		String endpoint = getApiUrl("statuses/lookup.json");
+
+		// Make a request to get the tweet
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		params.put("tweet_mode", "extended");
+		client.post(endpoint, params, "", handler);
+	}
 }

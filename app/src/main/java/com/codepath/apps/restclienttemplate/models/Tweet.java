@@ -18,6 +18,7 @@ import java.util.Locale;
 public class Tweet {
     public String body;
     public String createdAt;
+    public String id;
     public User user;
 
     // Media (images) in a tweet
@@ -29,6 +30,7 @@ public class Tweet {
     public Tweet() {
         this.body = "";
         this.createdAt = "";
+        id = "0";
         this.user = new User();
         mediaURL = "";
         media_w = media_h = 0;
@@ -47,6 +49,7 @@ public class Tweet {
         }
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.id = jsonObject.getString("id_str");
 
         // If the tweet has media, store the media
         if (jsonObject.getJSONObject("entities").has("media")) {

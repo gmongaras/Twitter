@@ -66,13 +66,20 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	// Given the tweet to publish and a handler, publish a new tweet
-	public void publishTweet(String tweetContent, JsonHttpResponseHandler handler) {
+	public void publishTweet(String tweetContent, long reply_id, JsonHttpResponseHandler handler) {
 		// Get the endpoint to send the request to
 		String endpoint = getApiUrl("statuses/update.json");
 
 		// Make a request to send the tweet
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
+
+		// If the mode is reply, reply to the given reply id (which won't be -1 if
+		// reply mode is on)
+		if (reply_id != -1) {
+			params.put("in_reply_to_status_id", reply_id);
+		}
+
 		client.post(endpoint, params, "", handler);
 	}
 

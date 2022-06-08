@@ -40,6 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     Button logoutBtn;
+    Button reply;
 
     // Used for swipe reloading
     private SwipeRefreshLayout swipeContainer;
@@ -233,6 +234,9 @@ public class TimelineActivity extends AppCompatActivity {
             // Navigate to the composer activity
             Intent i = new Intent(this, ComposeActivity.class);
 
+            // Put the compose activity in compose mode
+            i.putExtra("mode", "compose");
+
             // Start the intent, but send data back to the parent. So instead of
             // using startActivity, we use startActivityForResult
             startActivityForResult(i, REQUEST_CODE);
@@ -244,7 +248,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     // If a tweet is successfully sent (through the onOptionsItemSelected, startActivityForResult
-    // method), we should handle that response and update the racycler view
+    // method), we should handle that response and update the recycler view
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // If the request code is the same as the request code for

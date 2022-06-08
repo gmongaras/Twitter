@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.codepath.apps.restclienttemplate.ComposeActivity;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.detail_tweet;
 
@@ -53,7 +56,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     // Given a position in the Recycler View, bind data to that element
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         // Get the data/element at the given position
         Tweet tweet = tweets.get(position);
 
@@ -66,6 +69,28 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 Context context = v.getContext();
                 Intent i = new Intent(context, detail_tweet.class);
                 i.putExtra("id", tweets.get(position).id);
+                context.startActivity(i);
+            }
+        });
+
+        // When the reply button is clicked, open up a new window
+        // to compose a new tweet as a reply to the current tweet
+        holder.itemView.findViewById(R.id.reply).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create an intent to compose a tweet
+                Intent i = new Intent(view.getContext(), ComposeActivity.class);
+
+                // Set the mode as a reply
+                i.putExtra("mode", "reply");
+
+                // Pass in the username to reply to
+                i.putExtra("username", tweet.user.username);
+
+                // Pass in the tweet id
+                i.putExtra("replyId", tweet.id);
+
+                // Start the compose tweet view
                 context.startActivity(i);
             }
         });

@@ -17,6 +17,8 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.json.JSONException;
 import org.parceler.Parcels;
 
+import java.util.Objects;
+
 import okhttp3.Headers;
 
 public class ComposeActivity extends AppCompatActivity {
@@ -29,6 +31,10 @@ public class ComposeActivity extends AppCompatActivity {
     TwitterClient client;
     private static final String TAG = "ComposeActivity";
 
+    // The mode that a tweet can be sent ('compose' or 'reply')
+    String mode;
+    long replyId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +44,26 @@ public class ComposeActivity extends AppCompatActivity {
         etCompose = findViewById(R.id.etCompose);
         btnTweet = findViewById(R.id.btnTweet);
 
+        // Initialize the reply id to -1
+        replyId = -1;
+
         // Get a twitter client instance
         client = new TwitterClient(this);
+
+        // Get the mode from the intent info
+        mode = getIntent().getExtras().getString("mode");
+
+        // If the mode is reply, add an @ to the given username
+        if (Objects.equals(mode, "reply")) {
+            // Get the username to reply to
+            String username = getIntent().getExtras().getString("username");
+
+            // Get the id of the tweet to reply to
+            replyId = Long.parseLong(getIntent().getExtras().getString("replyId"));
+
+            // Add the username to the tweet
+            etCompose.setText("@" + username + " ");
+        }
 
 
         // When the button is clicked, check if the text is empty or too long
@@ -62,10 +86,8 @@ public class ComposeActivity extends AppCompatActivity {
                 // If the tweet is the correct length, send a request to post
                 // the tweet
                 else {
-                    Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
-
-                    // Send request
-                    client.publishTweet(text.toString(), new JsonHttpResponseHandler() {
+                    // Send request to publish the tweet
+                    client.publishTweet(text.toString(), replyId, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
                             Log.i(TAG, "Tweet successfully published!");

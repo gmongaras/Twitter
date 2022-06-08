@@ -40,7 +40,6 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     Button logoutBtn;
-    Button reply;
 
     // Used for swipe reloading
     private SwipeRefreshLayout swipeContainer;

@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,7 @@ public class detail_tweet extends AppCompatActivity {
     ImageView ivMedia_det;
     TextView retweet_ct_det;
     TextView like_ct_det;
+    ImageView like_det;
     boolean favorited;
 
     TwitterClient client;
@@ -50,6 +52,7 @@ public class detail_tweet extends AppCompatActivity {
         ivMedia_det = findViewById(R.id.ivMedia_det);
         retweet_ct_det = findViewById(R.id.retweet_ct_det);
         like_ct_det = findViewById(R.id.like_ct_det);
+        like_det = findViewById(R.id.like_det);
 
         // Get a twitter client instance
         client = new TwitterClient(this);
@@ -83,6 +86,59 @@ public class detail_tweet extends AppCompatActivity {
                     retweet_ct_det.setText(tweet.retweet_count);
                     like_ct_det.setText(tweet.favorite_count);
                     favorited = tweet.favorited;
+
+                    // If the tweet is favorited, load in the favorited
+                    // image
+                    if (favorited == true) {
+                        Glide.with(like_det)
+                                .load(R.drawable.heart_filled)
+                                .into(like_det);
+                    }
+
+                    // Add an on click listener for the like icon
+                    like_det.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (favorited == true) {
+                                // Send a request to unlike this tweet
+                                client.unlikeTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        Log.i(TAG, "Tweet liked");
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                        Log.e(TAG, "Tweet like issue", throwable);
+                                    }
+                                });
+
+                                Glide.with(like_det)
+                                        .load(R.drawable.heart)
+                                        .into(like_det);
+                                favorited = false;
+                            }
+                            else {
+                                // Send a request to unlike this tweet
+                                client.likeTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        Log.i(TAG, "Tweet liked");
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                        Log.e(TAG, "Tweet like issue", throwable);
+                                    }
+                                });
+
+                                Glide.with(like_det)
+                                        .load(R.drawable.heart_filled)
+                                        .into(like_det);
+                                favorited = true;
+                            }
+                        }
+                    });
 
                     // Load in the profile image
                     Glide.with(ivProfileImage_det)

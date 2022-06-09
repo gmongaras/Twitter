@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.codepath.apps.restclienttemplate.databinding.ActivityDetailTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -33,6 +34,7 @@ public class detail_tweet extends AppCompatActivity {
     TextView like_ct_det;
     ImageView like_det;
     boolean favorited;
+    private ActivityDetailTweetBinding binding;
 
     TwitterClient client;
 
@@ -41,7 +43,8 @@ public class detail_tweet extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_tweet);
+        binding = ActivityDetailTweetBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Get a reference to each item in the tweet view
         ivProfileImage_det = findViewById(R.id.ivProfileImage_det);

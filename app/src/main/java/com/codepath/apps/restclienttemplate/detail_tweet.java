@@ -35,6 +35,7 @@ public class detail_tweet extends AppCompatActivity {
     ImageView like_det;
     boolean favorited;
     private ActivityDetailTweetBinding binding;
+    ImageView reply_det;
 
     TwitterClient client;
 
@@ -56,6 +57,7 @@ public class detail_tweet extends AppCompatActivity {
         retweet_ct_det = findViewById(R.id.retweet_ct_det);
         like_ct_det = findViewById(R.id.like_ct_det);
         like_det = findViewById(R.id.like_det);
+        reply_det = findViewById(R.id.reply_det);
 
         // Get a twitter client instance
         client = new TwitterClient(this);
@@ -108,6 +110,15 @@ public class detail_tweet extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                                         Log.i(TAG, "Tweet liked");
+
+                                        // Change the image to an unliked heart
+                                        Glide.with(like_det)
+                                                .load(R.drawable.heart)
+                                                .into(like_det);
+                                        favorited = false;
+
+                                        // Decrease the like count
+                                        like_ct_det.setText(String.valueOf(Integer.parseInt(like_ct_det.getText().toString())-1));
                                     }
 
                                     @Override
@@ -115,18 +126,22 @@ public class detail_tweet extends AppCompatActivity {
                                         Log.e(TAG, "Tweet like issue", throwable);
                                     }
                                 });
-
-                                Glide.with(like_det)
-                                        .load(R.drawable.heart)
-                                        .into(like_det);
-                                favorited = false;
                             }
                             else {
-                                // Send a request to unlike this tweet
+                                // Send a request to like this tweet
                                 client.likeTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                                         Log.i(TAG, "Tweet liked");
+
+                                        // Change the image to a liked heart
+                                        Glide.with(like_det)
+                                                .load(R.drawable.heart_filled)
+                                                .into(like_det);
+                                        favorited = true;
+
+                                        // Increase the like count
+                                        like_ct_det.setText(String.valueOf(Integer.parseInt(like_ct_det.getText().toString())+1));
                                     }
 
                                     @Override
@@ -134,11 +149,6 @@ public class detail_tweet extends AppCompatActivity {
                                         Log.e(TAG, "Tweet like issue", throwable);
                                     }
                                 });
-
-                                Glide.with(like_det)
-                                        .load(R.drawable.heart_filled)
-                                        .into(like_det);
-                                favorited = true;
                             }
                         }
                     });
@@ -171,6 +181,28 @@ public class detail_tweet extends AppCompatActivity {
                         ivMedia_det.getLayoutParams().width = 0;
                         ivMedia_det.setVisibility(View.INVISIBLE);
                     }
+
+                    // When the reply button is clicked, open up a new window
+                    // to compose a new tweet as a reply to the current tweet
+                    reply_det.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Create an intent to compose a tweet
+                            Intent i = new Intent(view.getContext(), ComposeActivity.class);
+
+                            // Set the mode as a reply
+                            i.putExtra("mode", "reply");
+
+                            // Pass in the username to reply to
+                            i.putExtra("username", tweet.user.username);
+
+                            // Pass in the tweet id
+                            i.putExtra("replyId", tweet.id);
+
+                            // Start the compose tweet view
+                            startActivity(i);
+                        }
+                    });
 
                 } catch (JSONException e) {
                     Log.e(TAG, "Issue parsing json into tweet", e);

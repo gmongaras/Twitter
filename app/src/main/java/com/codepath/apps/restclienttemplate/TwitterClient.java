@@ -100,7 +100,7 @@ public class TwitterClient extends OAuthBaseClient {
 		// Get the endpoint to send the request to
 		String endpoint = getApiUrl("favorites/destroy.json");
 
-		// Make a request to like the tweet
+		// Make a request to unlike the tweet
 		RequestParams params = new RequestParams();
 		params.put("id", id);
 		client.post(endpoint, params, "", handler);
@@ -111,7 +111,7 @@ public class TwitterClient extends OAuthBaseClient {
 		// Get the endpoint to send the request to
 		String endpoint = getApiUrl("statuses/retweet.json");
 
-		// Make a request to like the tweet
+		// Make a request to retweet the tweet
 		RequestParams params = new RequestParams();
 		params.put("id", id);
 		client.post(endpoint, params, "", handler);
@@ -122,7 +122,7 @@ public class TwitterClient extends OAuthBaseClient {
 		// Get the endpoint to send the request to
 		String endpoint = getApiUrl("statuses/unretweet.json");
 
-		// Make a request to like the tweet
+		// Make a request to unretweet the tweet
 		RequestParams params = new RequestParams();
 		params.put("id", id);
 		client.post(endpoint, params, "", handler);
@@ -138,5 +138,17 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("id", tweetId);
 		params.put("tweet_mode", "extended");
 		client.post(endpoint, params, "", handler);
+	}
+
+	// Get the followers of a user with a given id
+	public void getFollowers(long id, JsonHttpResponseHandler handler) {
+		// Get the endpoint to send the request to
+		String endpoint = getApiUrl("followers/list.json");
+
+		// Make a request to get the followers
+		RequestParams params = new RequestParams();
+		params.put("id", id);
+		params.put("count", 15);
+		client.get(endpoint, params, handler);
 	}
 }

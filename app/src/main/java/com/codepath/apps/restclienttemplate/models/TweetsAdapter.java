@@ -22,8 +22,11 @@ import com.codepath.apps.restclienttemplate.ComposeActivity;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.detail_tweet;
+import com.codepath.apps.restclienttemplate.userActivity;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -207,6 +210,45 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
                 // Start the compose tweet view
                 context.startActivity(i);
+            }
+        });
+
+        // Add an on click listener for the user icon
+        holder.ivProfileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                client.getFollowers(tweet.user.userId, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        Log.i(TAG, "Followers retrieved!");
+
+                        try {
+                            // Get all users from the json data
+                            String users = json.jsonObject.getJSONArray("users").toString();
+
+                            // Create an intent to load the users page
+                            Intent i = new Intent(context, userActivity.class);
+
+                            // Store user follower information
+                            i.putExtra("users", users);
+
+                            // Store the user information
+                            i.putExtra("profileImg", tweet.user.publicImageUrl);
+                            i.putExtra("username", tweet.user.username);
+
+                            // Show the followers page
+                            context.startActivity(i);
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Issue getting users from the followers data");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.e(TAG, "Followers not retrieved :(");
+                    }
+                });
             }
         });
 

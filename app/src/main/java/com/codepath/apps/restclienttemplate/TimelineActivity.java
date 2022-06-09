@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +43,9 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     Button logoutBtn;
+
+    // Instance of the progress action-view
+    MenuItem miActionProgressItem;
 
     // Used for swipe reloading
     private SwipeRefreshLayout swipeContainer;
@@ -91,11 +97,10 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
 
-
-
         // Populate the home timeline recycler view using the API
-        populateHomeTimeline();
-
+        //populateHomeTimeline();
+        // Node ^ this was moved to onPrepareOptionsMenu in order to
+        // create the menu before loading in the tweets to show the progress bar
 
 
 
@@ -143,6 +148,28 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
 
+    // Used for progress bar
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+
+        // Populate the home timeline recycler view using the API
+        populateHomeTimeline();
+
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
+    }
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
+    }
+
+
     // This method sends out a network request and appends new data items to your adapter.
     public void loadNextDataFromApi(int offset) {
         // Send an API request to retrieve appropriate paginated data
@@ -152,6 +179,7 @@ public class TimelineActivity extends AppCompatActivity {
         //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
 
         // Call the API method to get the home timeline information
+        showProgressBar();
         client.getTweets(String.valueOf(smallest_id-1), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -172,11 +200,13 @@ public class TimelineActivity extends AppCompatActivity {
                         smallest_id = Long.parseLong(tweets.get(i).id);
                     }
                 }
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onError! " + response, throwable);
+                hideProgressBar();
             }
         });
     }
@@ -184,9 +214,11 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void populateHomeTimeline() {
         // Call the API method to get the home timeline information
+        showProgressBar();
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
+                showProgressBar();
                 Log.i(TAG, "onSuccess! " + json.toString());
 
                 // Load in a list of tweets and notify the adapter
@@ -204,11 +236,13 @@ public class TimelineActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                 }
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onError! " + response, throwable);
+                hideProgressBar();
             }
         });
     }

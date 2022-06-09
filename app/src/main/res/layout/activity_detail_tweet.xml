@@ -96,8 +96,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/retweet_ct_det"
+        android:layout_alignBottom="@+id/reply_det"
         android:layout_marginStart="120dp"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/reply_det"
         app:srcCompat="@drawable/retweet" />
 
@@ -106,8 +108,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/retweet_ct_det"
+        android:layout_alignBottom="@+id/retweet_det"
         android:layout_marginStart="120dp"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/retweet_det"
         app:srcCompat="@drawable/heart" />
 

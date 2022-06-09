@@ -36,6 +36,8 @@ public class detail_tweet extends AppCompatActivity {
     boolean favorited;
     private ActivityDetailTweetBinding binding;
     ImageView reply_det;
+    ImageView retweet_det;
+    boolean retweeted;
 
     TwitterClient client;
 
@@ -58,6 +60,7 @@ public class detail_tweet extends AppCompatActivity {
         like_ct_det = findViewById(R.id.like_ct_det);
         like_det = findViewById(R.id.like_det);
         reply_det = findViewById(R.id.reply_det);
+        retweet_det = findViewById(R.id.retweet_det);
 
         // Get a twitter client instance
         client = new TwitterClient(this);
@@ -91,12 +94,18 @@ public class detail_tweet extends AppCompatActivity {
                     retweet_ct_det.setText(tweet.retweet_count);
                     like_ct_det.setText(tweet.favorite_count);
                     favorited = tweet.favorited;
+                    retweeted = tweet.retweeted;
 
                     // If the tweet is favorited, load in the favorited
                     // image
                     if (favorited == true) {
                         Glide.with(like_det)
                                 .load(R.drawable.heart_filled)
+                                .into(like_det);
+                    }
+                    else {
+                        Glide.with(like_det)
+                                .load(R.drawable.heart)
                                 .into(like_det);
                     }
 
@@ -109,7 +118,7 @@ public class detail_tweet extends AppCompatActivity {
                                 client.unlikeTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Headers headers, JSON json) {
-                                        Log.i(TAG, "Tweet liked");
+                                        Log.i(TAG, "Tweet unliked");
 
                                         // Change the image to an unliked heart
                                         Glide.with(like_det)
@@ -123,7 +132,7 @@ public class detail_tweet extends AppCompatActivity {
 
                                     @Override
                                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                                        Log.e(TAG, "Tweet like issue", throwable);
+                                        Log.e(TAG, "Tweet unlike issue", throwable);
                                     }
                                 });
                             }
@@ -147,6 +156,73 @@ public class detail_tweet extends AppCompatActivity {
                                     @Override
                                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                                         Log.e(TAG, "Tweet like issue", throwable);
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+                    // If the tweet is retweeted, load in the retweeted icon
+                    if (retweeted == true) {
+                        Glide.with(retweet_det)
+                                .load(R.drawable.retweet_filled)
+                                .into(retweet_det);
+                    }
+                    else {
+                        Glide.with(retweet_det)
+                                .load(R.drawable.retweet)
+                                .into(retweet_det);
+                    }
+
+                    // Add an onclick listener for the retweet icon
+                    retweet_det.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // If the tweet has already been retweeted, unretweet it
+                            if (retweeted == true) {
+                                // Send a request to unretweet this tweet
+                                client.unretweetTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        Log.i(TAG, "Tweet unretweeted");
+
+                                        // Change the image to an unliked heart
+                                        Glide.with(retweet_det)
+                                                .load(R.drawable.retweet)
+                                                .into(retweet_det);
+                                        retweeted = false;
+
+                                        // Decrease the retweet count
+                                        retweet_ct_det.setText(String.valueOf(Integer.parseInt(retweet_ct_det.getText().toString()) - 1));
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                        Log.e(TAG, "Tweet unretweet issue", throwable);
+                                    }
+                                });
+                            }
+                            // If the tweet has not been retweeted, retweet it
+                            else {
+                                // Send a request to retweet this tweet
+                                client.retweetTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        Log.i(TAG, "Tweet retweeted");
+
+                                        // Change the image to an unliked heart
+                                        Glide.with(retweet_det)
+                                                .load(R.drawable.retweet_filled)
+                                                .into(retweet_det);
+                                        retweeted = true;
+
+                                        // Increase the retweet count
+                                        retweet_ct_det.setText(String.valueOf(Integer.parseInt(retweet_ct_det.getText().toString()) + 1));
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                        Log.e(TAG, "Tweet retweet issue", throwable);
                                     }
                                 });
                             }

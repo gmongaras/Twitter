@@ -106,6 +106,28 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(endpoint, params, "", handler);
 	}
 
+	// Given a tweet id, send a request to retweet this tweet
+	public void retweetTweet(long id, JsonHttpResponseHandler handler) {
+		// Get the endpoint to send the request to
+		String endpoint = getApiUrl("statuses/retweet.json");
+
+		// Make a request to like the tweet
+		RequestParams params = new RequestParams();
+		params.put("id", id);
+		client.post(endpoint, params, "", handler);
+	}
+
+	// Given a tweet id, send a request to retweet this tweet
+	public void unretweetTweet(long id, JsonHttpResponseHandler handler) {
+		// Get the endpoint to send the request to
+		String endpoint = getApiUrl("statuses/unretweet.json");
+
+		// Make a request to like the tweet
+		RequestParams params = new RequestParams();
+		params.put("id", id);
+		client.post(endpoint, params, "", handler);
+	}
+
 	// Send a request to get information on a given tweet
 	public void getTweetInfo(String tweetId, JsonHttpResponseHandler handler) {
 		// Get the endpoint to send the request to

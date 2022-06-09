@@ -23,6 +23,7 @@ public class Tweet {
     public String retweet_count;
     public String favorite_count;
     public boolean favorited;
+    public boolean retweeted;
 
     // Media (images) in a tweet
     public String mediaURL;
@@ -40,6 +41,7 @@ public class Tweet {
         retweet_count = "0";
         favorite_count = "0";
         favorited = false;
+        retweeted = false;
     }
 
     // Load in JSON data into a new Tweet
@@ -59,6 +61,7 @@ public class Tweet {
         tweet.retweet_count = jsonObject.getString("retweet_count");
         tweet.favorite_count = jsonObject.getString("favorite_count");
         tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
 
         // If the tweet has media, store the media
         if (jsonObject.getJSONObject("entities").has("media")) {

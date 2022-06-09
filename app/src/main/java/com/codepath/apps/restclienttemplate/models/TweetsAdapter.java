@@ -133,6 +133,61 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         });
 
+        // Add an onclick listener for the retweet icon
+        holder.itemView.findViewById(R.id.retweet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // If the tweet has already been retweeted, unretweet it
+                if (holder.retweeted == true) {
+                    // Send a request to unretweet this tweet
+                    client.unretweetTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.i(TAG, "Tweet unretweeted");
+
+                            // Change the image to an unliked heart
+                            Glide.with(context)
+                                    .load(R.drawable.retweet)
+                                    .into((ImageView) view.findViewById(R.id.retweet));
+                            holder.retweeted = false;
+
+                            // Decrease the retweet count
+                            holder.retweet_ct.setText(String.valueOf(Integer.parseInt(holder.retweet_ct.getText().toString()) - 1));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e(TAG, "Tweet unretweet issue", throwable);
+                        }
+                    });
+                }
+                // If the tweet has not been retweeted, retweet it
+                else {
+                    // Send a request to retweet this tweet
+                    client.retweetTweet(Long.parseLong(tweet.id), new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.i(TAG, "Tweet retweeted");
+
+                            // Change the image to an unliked heart
+                            Glide.with(context)
+                                    .load(R.drawable.retweet_filled)
+                                    .into((ImageView) view.findViewById(R.id.retweet));
+                            holder.retweeted = true;
+
+                            // Increase the retweet count
+                            holder.retweet_ct.setText(String.valueOf(Integer.parseInt(holder.retweet_ct.getText().toString()) + 1));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e(TAG, "Tweet retweet issue", throwable);
+                        }
+                    });
+                }
+            }
+        });
+
         // When the reply button is clicked, open up a new window
         // to compose a new tweet as a reply to the current tweet
         holder.itemView.findViewById(R.id.reply).setOnClickListener(new View.OnClickListener() {
@@ -174,11 +229,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvTimestamp;
         ImageView ivMedia;
         TextView retweet_ct;
+        ImageView retweet;
         TextView like_ct;
         ImageView like;
 
         // Did the user favorite the tweet?
         boolean favorited;
+
+        // Did the user retweet the tweet?
+        boolean retweeted;
 
         // Given a view to store a tweet, populate that view
         // with tweet information
@@ -193,6 +252,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
             ivMedia = itemView.findViewById(R.id.ivMedia);
             retweet_ct = itemView.findViewById(R.id.retweet_ct);
+            retweet = itemView.findViewById(R.id.retweet);
             like_ct = itemView.findViewById(R.id.like_ct);
             like = itemView.findViewById(R.id.like);
         }
@@ -226,6 +286,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             // Get the favorited state
             favorited = tweet.favorited;
+            retweeted = tweet.retweeted;
 
             // Load in the profile image
             Glide.with(context)
@@ -267,6 +328,18 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 Glide.with(context)
                         .load(R.drawable.heart)
                         .into(like);
+            }
+
+            // If the tweet is retweeted, load in the retweeted icon
+            if (tweet.retweeted == true) {
+                Glide.with(context)
+                        .load(R.drawable.retweet_filled)
+                        .into(retweet);
+            }
+            else {
+                Glide.with(context)
+                        .load(R.drawable.retweet)
+                        .into(retweet);
             }
         }
 

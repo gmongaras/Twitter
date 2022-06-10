@@ -2,7 +2,7 @@
 
 **Twitter** is an android app that allows a user to view their Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **13** hours spent in total
+Time spent: **30** hours spent in total
 
 ## User Stories
 
@@ -53,6 +53,8 @@ GIF created with [Kap](https://getkap.co/).
 ## Notes
 
 - Took me a while to figure out how to start since I was running into an issue with the room library in gradle. After a few hours, I figured out the issue had to do with an outdated libaray and I had to update it from '2.3.0' to specifically '2.4.0-alpha03'. If I used '2.4.0', I would have to update the SDK to 32 which would lead to other issues.
+- Has an issue when implementing scrolling effects since the effects needed to use a Toolbar when I was using a menu. So far, the only way I found to fix this is by implementing a toolbar instead of a menu.
+- Tweet body text is unclickable due to links being clickable. So, when clicking on a tweet's text, it doesn't go into detailed view.
 
 ## Open-source libraries used
 

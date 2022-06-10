@@ -392,6 +392,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         tweets.clear();
         notifyDataSetChanged();
     }
+    public void clear_noNotif() {
+        tweets.clear();
+    }
 
     // Add a list of items -- change to type used
     public void addAll(List<Tweet> list) {

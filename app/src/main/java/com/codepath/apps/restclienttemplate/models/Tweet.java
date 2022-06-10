@@ -3,6 +3,13 @@ package com.codepath.apps.restclienttemplate.models;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,18 +22,37 @@ import java.util.List;
 import java.util.Locale;
 
 @Parcel
+@Entity(foreignKeys = @ForeignKey(entity=User.class, parentColumns="userId", childColumns="userId"))
 public class Tweet {
-    public String body;
-    public String createdAt;
+    @ColumnInfo
+    @NonNull
+    @PrimaryKey // This is our primary key
     public String id;
-    public User user;
+
+    @ColumnInfo
+    public String body;
+    @ColumnInfo
+    public String createdAt;
+    @ColumnInfo
     public String retweet_count;
+    @ColumnInfo
     public String favorite_count;
+    @ColumnInfo
     public boolean favorited;
+    @ColumnInfo
     public boolean retweeted;
 
+    // Instead of a column in the table representing User data, we want a
+    // foreign key into the user table.
+    @Ignore
+    public User user;
+    @ColumnInfo
+    public long userId;
+
     // Media (images) in a tweet
+    @ColumnInfo
     public String mediaURL;
+    @ColumnInfo
     public int media_w, media_h;
 
     private static final String TAG = "User";
@@ -62,6 +88,7 @@ public class Tweet {
         tweet.favorite_count = jsonObject.getString("favorite_count");
         tweet.favorited = jsonObject.getBoolean("favorited");
         tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.userId = tweet.user.userId;
 
         // If the tweet has media, store the media
         if (jsonObject.getJSONObject("entities").has("media")) {

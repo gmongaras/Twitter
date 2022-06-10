@@ -45,10 +45,16 @@ android {
     }
 }
 
+ext {
+    roomVersion = "2.4.0-alpha03"
+}
+
 allprojects {
     repositories {
         // requires Gradle v4.1+
         google()
+
+        jcenter()
     }
 }
 
@@ -76,4 +82,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+
+    // Room for simple persistence with an ORM
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
 }

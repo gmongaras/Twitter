@@ -9,6 +9,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -21,7 +22,10 @@ import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDao;
+import com.codepath.apps.restclienttemplate.models.TweetWithUser;
 import com.codepath.apps.restclienttemplate.models.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -46,6 +50,9 @@ public class TimelineActivity extends AppCompatActivity {
     Button logoutBtn;
     private ActivityTimelineBinding binding;
 
+    // Used for SQL database connection
+    TweetDao tweetDao;
+
     // Instance of the progress action-view
     MenuItem miActionProgressItem;
 
@@ -66,6 +73,9 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Get a twitter client so that we can make calls to the API
         client = TwitterApp.getRestClient(this);
+
+        // Initialize the SQL database object
+        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
@@ -147,7 +157,6 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-
     }
 
 
@@ -209,7 +218,7 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onError! " + response, throwable);
-                hideProgressBar();
+                //hideProgressBar();
             }
         });
     }
@@ -227,7 +236,14 @@ public class TimelineActivity extends AppCompatActivity {
                 // Load in a list of tweets and notify the adapter
                 JSONArray jsonArray = json.jsonArray;
                 try {
-                    tweets.addAll(Tweet.fromJSONArray(jsonArray));
+                    // List of new tweets from the API call
+                    List<Tweet> tweetsFromNetwork = Tweet.fromJSONArray(jsonArray);
+
+                    // List of Users from the API call
+                    List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
+
+                    // Add the tweets to the Recycler View
+                    tweets.addAll(tweetsFromNetwork);
                     adapter.notifyDataSetChanged();
 
                     // Get the smallest id seen so far
@@ -236,6 +252,20 @@ public class TimelineActivity extends AppCompatActivity {
                             smallest_id = Long.parseLong(tweets.get(i).id);
                         }
                     }
+
+                    // After all tweets have been loaded in, save the tweets to the database
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i(TAG, "Saving data into database");
+
+                            // Save every Tweet and User to the database.
+                            // Note: Since the Users are the child of the Foreign key,
+                            // They must be populated first
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                 }
@@ -245,7 +275,44 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onError! " + response, throwable);
-                hideProgressBar();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideProgressBar();
+                    }
+                });
+
+                // If the tweets could not be loaded in through the API, load
+                // in the tweets from the database...
+                // Make the SQL query for existing tweets in the DB. Make sure this
+                // is happening on a background thread since it's an expensive
+                // operation.
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "Showing data from database");
+                        List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
+
+                        // Get all the tweets from the database
+                        List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
+
+                        reloadOffline(tweetsFromDB);
+                    }
+                });
+
+            }
+        });
+    }
+
+    // Reload the recycler view when offline
+    public void reloadOffline(List<Tweet> tweetsFromDB) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Clear the adapter and add all saved tweets to the adapter
+                adapter.clear();
+                adapter.addAll(tweetsFromDB);
             }
         });
     }
